@@ -4,7 +4,7 @@ A library for simple svg radar charts. Based upon [Lorenzo Spinelli's](https://g
 
 ## Example
 
-An example using [pure-theme](https://github.com/grumply/pure-theme) for some simple.
+An example using [pure-theme](https://github.com/grumply/pure-theme) for expositive styling.
 
 ```haskell
 {-# LANGUAGE RecordWildCards, OverloadedStrings #-}
@@ -14,12 +14,13 @@ import Pure.Radar
 import Pure.Theme
 import Control.Monad
 
--- Selectors corresponding to the shape field accessors. These must implement 
--- Enum and Bounded to work with Pure instance and Show for the Default 
--- instance.
+-- A sum type corresponding to the shape field accessors. Column implements
+-- Enum and Bounded to work with Radar's Pure instance and Show for Radar's
+-- Default instance.
 data Column = Alpha | Beta | Gamma deriving (Enum,Bounded,Show)
 
--- the type of data from which we can extract values of the above columns
+-- The data of interest for the radar chart. Each Shape will correspond to
+-- a shape on the radar chart.
 data Shape = Shape 
     { alpha :: Double
     , beta :: Double
@@ -41,8 +42,8 @@ main = inject body $
          . Dat shapes 
          . Scales 3 
          . LabelMargin 25
-         . WithDot (\_ _ -> Theme DotT)
-         . WithShape (\_ -> Theme ShapeT)
+         . WithDot (\_ _ -> Theme DotT)   -- add styles to each dot, non-dependently
+         . WithShape (\_ -> Theme ShapeT) -- add styles to each shape, non-dependently
 
 data DotT = DotT
 instance Themeable DotT where
