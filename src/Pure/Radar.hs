@@ -17,6 +17,7 @@ import Pure.Radar.Utils as Utils
 import Data.List as List
 import Data.Foldable
 import Data.Traversable
+import Data.Typeable
 
 import Text.Printf
 
@@ -36,15 +37,15 @@ data Radar b a = Radar_
     , withShape :: a -> View -> View
     }
 
-deriveLocalComponent ''Radar 
+deriveLocalComponent ''Radar
 
 instance Show b => Default (Radar b a) where
-    def = Radar_ def 300 0 0 [] (\_ _ -> def) (toTxt . show) noSmoothing 
+    def = Radar_ def 300 0 0 [] (\_ _ -> def) (toTxt . show) noSmoothing
             (\_ _ -> id) (\_ -> id) (\_ -> id) (\_ -> id) (\_ -> id)
 
-instance (Enum b, Bounded b) => Pure (Radar b a) where
+instance (Typeable a, Typeable b, Enum b, Bounded b) => Pure (Radar b a) where
     view Radar_ {..} =
-        let 
+        let
             columns :: [b]
             columns = enumFrom (minBound :: b)
 
@@ -55,13 +56,13 @@ instance (Enum b, Bounded b) => Pure (Radar b a) where
             sz = fromIntegral size
 
             viewBox :: Txt
-            viewBox = neg (int labelMargin) 
-                        <<>> zero 
-                        <<>> int (size + labelMargin * 2) 
+            viewBox = neg (int labelMargin)
+                        <<>> zero
+                        <<>> int (size + labelMargin * 2)
                         <<>> int size
 
             angles :: [Double]
-            angles = 
+            angles =
                 let l = fromIntegral (List.length columns)
                 in [1..l] <&> \i -> pi * 2 * i / l
 
@@ -83,15 +84,15 @@ instance (Enum b, Bounded b) => Pure (Radar b a) where
             radiiG =
                 G <||>
                     ( zip angles columns <&> \(a,c) ->
-                        Polyline <| withRadius c . Stroke "gray" 
+                        Polyline <| withRadius c . Stroke "gray"
                                   . Points (Utils.points [(0,0),p2c a (sz / 2)])
                     )
 
             shapeG :: View
-            shapeG = 
+            shapeG =
                 G <||>
-                    (pts <&> \(a,ps) -> 
-                        Path <| withShape a . Stroke "black" 
+                    (pts <&> \(a,ps) ->
+                        Path <| withShape a . Stroke "black"
                               . D (draw (polarize ps))
                     )
 
@@ -101,11 +102,11 @@ instance (Enum b, Bounded b) => Pure (Radar b a) where
                     (List.reverse [1..scales] <&> \i@(fromIntegral -> s) ->
                         let r = s / fromIntegral scales * sz / 2
                         in Circle <| withScale i
-                                   . Stroke "gray" 
+                                   . Stroke "gray"
                                    . Fill "#fafafa"
-                                   . Cx zero 
-                                   . Cy zero 
-                                   . R (toTxt r) 
+                                   . Cx zero
+                                   . Cy zero
+                                   . R (toTxt r)
                     )
 
             captionG :: View
@@ -127,17 +128,17 @@ instance (Enum b, Bounded b) => Pure (Radar b a) where
 
         in
             Svg <| Width (int size) . Height (int size) . ViewBox viewBox |>
-                [ G <| SVG.Transform translate|> 
+                [ G <| SVG.Transform translate|>
                     [ scaleG
                     , radiiG
                     , shapeG
                     , captionG
                     , dotG
                     ]
-                ] 
+                ]
 
 noSmoothing [] = ""
-noSmoothing (p:ps) = 
+noSmoothing (p:ps) =
     let d2t = toTxt @ String . printf "%.4f"
         pt x y = d2t x <> "," <> d2t y
         m (x,y) = "M" <> pt x y
