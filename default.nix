@@ -3,7 +3,7 @@
 }:
 mkDerivation {
   pname = "pure-radar";
-  version = "0.1.0.0";
+  version = "0.8.0.0";
   src = ./.;
   libraryHaskellDepends = [
     base pure pure-css pure-prop pure-svg pure-theme pure-txt
