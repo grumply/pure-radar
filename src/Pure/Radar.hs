@@ -2,6 +2,7 @@
 module Pure.Radar where
 
 import Pure hiding (Name,features,properties)
+import Pure.Data.Styles.Patterns 
 import Pure.Data.CSS hiding (has)
 import Pure.Data.SVG as SVG
 import Pure.Data.SVG.Properties as SVG
@@ -56,7 +57,7 @@ instance (Typeable a, Typeable b, Enum b, Bounded b) => Pure (Radar b a) where
             sz = fromIntegral size
 
             viewBox :: Txt
-            viewBox = neg (int labelMargin)
+            viewBox = (int (negate labelMargin))
                         <<>> zero
                         <<>> int (size + labelMargin * 2)
                         <<>> int size
@@ -78,7 +79,7 @@ instance (Typeable a, Typeable b, Enum b, Bounded b) => Pure (Radar b a) where
                     delta = fixed (sz / 2)
 
             dots :: [(a,b,Double,Double)]
-            dots = concatMap (\(a,ps) -> zip4 (repeat a) columns angles ps) pts
+            dots = concatMap (\(a,ps) -> zip4 (List.repeat a) columns angles ps) pts
 
             radiiG :: View
             radiiG =
@@ -115,7 +116,7 @@ instance (Typeable a, Typeable b, Enum b, Bounded b) => Pure (Radar b a) where
                     (zip angles columns <&> \(a,c) ->
                         let (x,y) = p2c a (sz / 2 * 0.95)
                         in SVG.Text <| withCaption c . X (fixed x) . Y (fixed y) . Dy "5" . TextAnchor "middle" |>
-                            [ text (label c) ]
+                            [ txt (label c) ]
                     )
 
             dotG :: View

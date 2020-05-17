@@ -25,6 +25,7 @@ library
     pure-theme,
     pure-css,
     pure-prop,
+    pure-styles,
     pure-svg,
     pure-txt
   hs-source-dirs:      src

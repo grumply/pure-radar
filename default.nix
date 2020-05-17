@@ -1,4 +1,4 @@
-{ mkDerivation, base, pure, pure-css, pure-prop, pure-svg
+{ mkDerivation, base, pure, pure-css, pure-styles, pure-prop, pure-svg
 , pure-theme, pure-txt, stdenv
 }:
 mkDerivation {
@@ -6,7 +6,7 @@ mkDerivation {
   version = "0.8.0.0";
   src = ./.;
   libraryHaskellDepends = [
-    base pure pure-css pure-prop pure-svg pure-theme pure-txt
+    base pure pure-css pure-styles pure-prop pure-svg pure-theme pure-txt
   ];
   homepage = "github.com/grumply/pure-radar";
   description = "SVG radar charts";
